@@ -1,0 +1,5 @@
+syntax: glob
+*.pyc
+commentonit.egg-info/*
+development.ini*
+pip-requirements-local.txt

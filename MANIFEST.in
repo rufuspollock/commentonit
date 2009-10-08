@@ -1,0 +1,3 @@
+include commentonit/config/deployment.ini_tmpl
+recursive-include commentonit/public *
+recursive-include commentonit/templates *
