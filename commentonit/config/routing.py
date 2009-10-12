@@ -21,7 +21,8 @@ def make_map():
     # CUSTOM ROUTES HERE
 
     map.connect('home', '/', controller='home', action='index')
-    map.connect('/{controller}/{action}')
-    map.connect('/{controller}/{action}/{id}')
+    map.connect('annotate', '/annotate', controller='home', action='annotate')
+    map.connect('/{controller}/{action}/')
+    map.connect('/{controller}/{action}/{id}/')
 
     return map

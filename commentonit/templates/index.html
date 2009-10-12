@@ -7,8 +7,17 @@
 
   <div py:match="content">
     <form action="annotate" method="POST">
-      <label>Enter a Url:</label>
-      ${h.text(name='url', size=30)}
+      <!--
+      <label>Upload a file:</label>
+      ${h.file(name='file', size=30)}
+      -->
+
+      <label>Enter some text (plain):</label>
+      ${h.textarea(name='text', cols=80, rows=10)}
+
+      <br />
+      <br />
+      ${h.submit('Go', 'Go')}
     </form>
 	</div>
 

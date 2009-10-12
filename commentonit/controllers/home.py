@@ -12,3 +12,9 @@ class HomeController(BaseController):
     def index(self):
         return render('index.html')
 
+    def annotate(self):
+        # TODO: create text in the backend ...
+        text = request.params.get('text', '')
+        c.content = '<pre>%s</pre>' % text
+        return render('annotate.html')
+
