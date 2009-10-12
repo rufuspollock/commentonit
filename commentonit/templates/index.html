@@ -1,0 +1,16 @@
+<html
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  py:strip="">
+  
+  <py:def function="page_title">Home</py:def>
+
+  <div py:match="content">
+    <form action="annotate" method="POST">
+      <label>Enter a Url:</label>
+      ${h.text(name='url', size=30)}
+    </form>
+	</div>
+
+  <xi:include href="layout.html" />
+</html>
