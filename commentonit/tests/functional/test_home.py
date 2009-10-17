@@ -9,6 +9,7 @@ class TestHomeController(TestController):
     def test_annotate(self):
         res = self.app.get(url('annotate'))
         assert 'Annotate' in res
+        assert 'jsannotate.min.css' in res
     
     sonnet = '''Shall I compare thee to a summer's day?
 Thou art more lovely and more temperate:
@@ -33,4 +34,5 @@ When in eternal lines to time thou grow'st,
         res = form.submit()
         assert 'Annotate' in res 
         assert self.sonnet.split()[0] in res, res
+        assert '<pre' in res
 

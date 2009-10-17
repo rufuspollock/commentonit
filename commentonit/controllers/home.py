@@ -8,7 +8,7 @@ from commentonit.lib.base import BaseController, render
 log = logging.getLogger(__name__)
 
 import annotator.middleware
-media_mount_path = '.js-annotate'
+media_mount_path = '/jsannotate'
 server_api = '/'
 anno_middleware = annotator.middleware.JsAnnotateMiddleware(None,
         media_mount_path, server_api)
@@ -23,6 +23,8 @@ class HomeController(BaseController):
         text = request.params.get('text', '')
         c.content = '<pre>%s</pre>' % text
         out = render('annotate.html')
-        out = anno_middleware.modify_html(out)
+        # out is a webhelpers.html.builder.literal
+        # we want to work with raw html ...
+        out = anno_middleware.modify_html(unicode(out))
         return out
 
