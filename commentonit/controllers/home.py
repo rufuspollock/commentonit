@@ -7,6 +7,12 @@ from commentonit.lib.base import BaseController, render
 
 log = logging.getLogger(__name__)
 
+import annotator.middleware
+media_mount_path = '.js-annotate'
+server_api = '/'
+anno_middleware = annotator.middleware.JsAnnotateMiddleware(None,
+        media_mount_path, server_api)
+
 class HomeController(BaseController):
 
     def index(self):
@@ -16,5 +22,7 @@ class HomeController(BaseController):
         # TODO: create text in the backend ...
         text = request.params.get('text', '')
         c.content = '<pre>%s</pre>' % text
-        return render('annotate.html')
+        out = render('annotate.html')
+        out = anno_middleware.modify_html(out)
+        return out
 

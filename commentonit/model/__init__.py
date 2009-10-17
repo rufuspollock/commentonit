@@ -14,7 +14,22 @@ def init_model(engine):
     #
     meta.Session.configure(bind=engine)
     meta.engine = engine
+    assert engine is not None
 
+import annotator.model
+annotation_table = annotator.model.make_annotation_table(meta.metadata)
+annotator.model.map_annotation_object(meta.Session.mapper, annotation_table)
+
+class Repository(object):
+
+    def create_db(self):
+        '''Create the tables if they don't already exist'''
+        meta.metadata.create_all(bind=meta.engine)
+
+    def init_db(self):
+        pass
+
+repo = Repository()
 
 ## Non-reflected tables may be defined and mapped at module level
 #foo_table = sa.Table("Foo", meta.metadata,

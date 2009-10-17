@@ -22,7 +22,8 @@ def make_map():
 
     map.connect('home', '/', controller='home', action='index')
     map.connect('annotate', '/annotate', controller='home', action='annotate')
-    map.connect('/{controller}/{action}/')
-    map.connect('/{controller}/{action}/{id}/')
+    map.connect('/{controller}/')
+    map.connect('/{controller}/{action}')
+    map.connect('/{controller}/{action}/{id}')
 
     return map
