@@ -6,14 +6,9 @@
   <py:def function="page_title">Annotate</py:def>
 
   <div py:match="content">
+    <div id="text-to-annotate">
     ${h.HTML(c.content)}
-
-    <script>
-        jQuery(function() {
-          $('pre').annotator();
-          $('pre').annotationStore();
-        });
-    </script>
+    </div>
 	</div>
 
   <xi:include href="layout.html" />

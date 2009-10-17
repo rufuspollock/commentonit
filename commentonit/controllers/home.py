@@ -19,9 +19,15 @@ class HomeController(BaseController):
         return render('index.html')
 
     def annotate(self):
+        c.prefix = server_api + 'annotation'
+        c.uri = 'make one up'
         # TODO: create text in the backend ...
         text = request.params.get('text', '')
-        c.content = '<pre>%s</pre>' % text
+        import webhelpers.markdown as md
+        if text:
+            c.content = md.markdown(text)
+        else:
+            c.content = ''
         out = render('annotate.html')
         # out is a webhelpers.html.builder.literal
         # we want to work with raw html ...

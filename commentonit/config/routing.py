@@ -22,6 +22,9 @@ def make_map():
 
     map.connect('home', '/', controller='home', action='index')
     map.connect('annotate', '/annotate', controller='home', action='annotate')
+    # need both of these for e.g. the annotation store ...
+    # /annotation/ (used in GET) and /annotation used in PUT
+    map.connect('/{controller}')
     map.connect('/{controller}/')
     map.connect('/{controller}/{action}')
     map.connect('/{controller}/{action}/{id}')
