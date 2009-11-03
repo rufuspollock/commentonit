@@ -16,9 +16,34 @@ def init_model(engine):
     meta.engine = engine
     assert engine is not None
 
+## ---------------------------
+## Annotation stuff
+
 import annotator.model
 annotation_table = annotator.model.make_annotation_table(meta.metadata)
 annotator.model.map_annotation_object(meta.Session.mapper, annotation_table)
+
+## ---------------------------
+## ..
+
+import uuid
+def make_uuid():
+    return unicode(uuid.uuid4())
+
+text_table = sa.Table('resource', meta.metadata,
+    sa.Column('id', sa.types.UnicodeText, primary_key=True, default=make_uuid),
+    sa.Column('title', sa.types.UnicodeText),
+    sa.Column('uri', sa.types.UnicodeText),
+    # types: url, (python) package, disk, inline (i.e. stored in payload)
+    sa.Column('payload_type', sa.types.UnicodeText, default=u'db'),
+    sa.Column('payload', sa.types.UnicodeText),
+    sa.Column('format', sa.types.UnicodeText),
+    )
+
+user_table = sa.Table('user', meta.metadata,
+    sa.Column('id', sa.types.UnicodeText, default=make_uuid),
+    sa.Column('name', sa.types.UnicodeText),
+    )
 
 class Repository(object):
 
@@ -31,21 +56,34 @@ class Repository(object):
 
 repo = Repository()
 
-## Non-reflected tables may be defined and mapped at module level
-#foo_table = sa.Table("Foo", meta.metadata,
-#    sa.Column("id", sa.types.Integer, primary_key=True),
-#    sa.Column("bar", sa.types.String(255), nullable=False),
-#    )
-#
-#class Foo(object):
-#    pass
-#
-#orm.mapper(Foo, foo_table)
+
+class Text(object):
+    def get_stream(self):
+        '''Get fileobj for content (if any) associated with this text.
+
+        '''
+        if self.payload_type == u'package':
+            package, path = self.payload.split('::')
+            import pkg_resources
+            fileobj = pkg_resources.resource_stream(package, path)
+            return fileobj
+        elif self.payload_type == u'inline':
+            from StringIO import StringIO
+            return StringIO(self.payload)
+        elif self.payload_type == u'disk':
+            fp = open(self.payload)
+            return open(fp)
+        else:
+            raise NotImplementedError
 
 
-## Classes for reflected tables may be defined here, but the table and
-## mapping itself must be done in the init_model function
-#reflected_table = None
-#
-#class Reflected(object):
-#    pass
+class User(object):
+    pass
+
+
+mapper(Text, text_table, properties={
+    'material':relation(Material, backref='resources')
+    },
+    order_by=resource_table.c.id
+    )
+
