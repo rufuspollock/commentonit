@@ -81,9 +81,10 @@ class User(object):
     pass
 
 
+mapper = meta.Session.mapper
+
 mapper(Text, text_table, properties={
-    'material':relation(Material, backref='resources')
     },
-    order_by=resource_table.c.id
+    order_by=text_table.c.id
     )
 
