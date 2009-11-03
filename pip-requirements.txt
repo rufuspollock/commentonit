@@ -1,0 +1,2 @@
+-e https://knowledgeforge.net/okfn/annotator#egg=annotator
+-e https://knowledgeforge.net/okfn/commentonit
