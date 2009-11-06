@@ -1,8 +1,11 @@
 """The application's model objects"""
+from datetime import datetime
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 
 from commentonit.model import meta
+Session = meta.Session
 
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""
@@ -30,10 +33,17 @@ import uuid
 def make_uuid():
     return unicode(uuid.uuid4())
 
-text_table = sa.Table('resource', meta.metadata,
+work_table = sa.Table('work', meta.metadata,
     sa.Column('id', sa.types.UnicodeText, primary_key=True, default=make_uuid),
+    sa.Column('created', sa.types.DateTime, default=datetime.now()),
     sa.Column('title', sa.types.UnicodeText),
     sa.Column('uri', sa.types.UnicodeText),
+    )
+
+text_table = sa.Table('text', meta.metadata,
+    sa.Column('id', sa.types.UnicodeText, primary_key=True, default=make_uuid),
+    sa.Column('work_id', sa.types.UnicodeText, sa.ForeignKey('work.id')),
+    sa.Column('created', sa.types.DateTime, default=datetime.now()),
     # types: url, (python) package, disk, inline (i.e. stored in payload)
     sa.Column('payload_type', sa.types.UnicodeText, default=u'db'),
     sa.Column('payload', sa.types.UnicodeText),
@@ -41,9 +51,18 @@ text_table = sa.Table('resource', meta.metadata,
     )
 
 user_table = sa.Table('user', meta.metadata,
-    sa.Column('id', sa.types.UnicodeText, default=make_uuid),
+    sa.Column('id', sa.types.UnicodeText, primary_key=True, default=make_uuid),
     sa.Column('name', sa.types.UnicodeText),
+    sa.Column('created', sa.types.DateTime, default=datetime.now()),
     )
+
+work_2_user_table = sa.Table('work_2_user', meta.metadata,
+    sa.Column('work_id', sa.types.UnicodeText, sa.ForeignKey('work.id'),
+        primary_key=True),
+    sa.Column('user_id', sa.types.UnicodeText, sa.ForeignKey('user.id'),
+        primary_key=True),
+    )
+
 
 class Repository(object):
 
@@ -51,11 +70,21 @@ class Repository(object):
         '''Create the tables if they don't already exist'''
         meta.metadata.create_all(bind=meta.engine)
 
+    def clean_db(self):
+        meta.metadata.drop_all(bind=meta.engine)
+
     def init_db(self):
         pass
 
+    def rebuild_db(self):
+        self.clean_db()
+        self.create_db()
+
+
 repo = Repository()
 
+class Work(object):
+    pass
 
 class Text(object):
     def get_stream(self):
@@ -83,8 +112,20 @@ class User(object):
 
 mapper = meta.Session.mapper
 
+mapper(Work, work_table, properties={
+    'owners':orm.relation(User, secondary=work_2_user_table, backref='works')
+    },
+    order_by=work_table.c.id
+    )
+
 mapper(Text, text_table, properties={
+    'work':orm.relation(Work, backref='texts')
     },
     order_by=text_table.c.id
+    )
+
+mapper(User, user_table, properties={
+    },
+    order_by=user_table.c.id
     )
 
