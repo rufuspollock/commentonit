@@ -5,7 +5,10 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from commentonit.model import meta
-Session = meta.Session
+from meta import Session
+from sqlalchemy.orm import mapper
+from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base(metadata=meta.metadata)
 
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""
@@ -24,69 +27,53 @@ def init_model(engine):
 
 import annotator.model
 annotation_table = annotator.model.make_annotation_table(meta.metadata)
-annotator.model.map_annotation_object(meta.Session.mapper, annotation_table)
+Annotation = annotator.model.Annotation
+annotator.model.map_annotation_object(mapper, annotation_table)
+# Correct for fact we aren't using Session.mapper but annotator expects it
+# http://www.sqlalchemy.org/trac/wiki/UsageRecipes/SessionAwareMapper
+Annotation.query = Session.query_property()
+
 
 ## ---------------------------
-## ..
+## Our Classes
 
 import uuid
 def make_uuid():
     return unicode(uuid.uuid4())
 
-work_table = sa.Table('work', meta.metadata,
-    sa.Column('id', sa.types.UnicodeText, primary_key=True, default=make_uuid),
-    sa.Column('created', sa.types.DateTime, default=datetime.now()),
-    sa.Column('title', sa.types.UnicodeText),
-    sa.Column('uri', sa.types.UnicodeText),
-    )
-
-text_table = sa.Table('text', meta.metadata,
-    sa.Column('id', sa.types.UnicodeText, primary_key=True, default=make_uuid),
-    sa.Column('work_id', sa.types.UnicodeText, sa.ForeignKey('work.id')),
-    sa.Column('created', sa.types.DateTime, default=datetime.now()),
-    # types: url, (python) package, disk, inline (i.e. stored in payload)
-    sa.Column('payload_type', sa.types.UnicodeText, default=u'db'),
-    sa.Column('payload', sa.types.UnicodeText),
-    sa.Column('format', sa.types.UnicodeText),
-    )
-
-user_table = sa.Table('user', meta.metadata,
-    sa.Column('id', sa.types.UnicodeText, primary_key=True, default=make_uuid),
-    sa.Column('name', sa.types.UnicodeText),
-    sa.Column('created', sa.types.DateTime, default=datetime.now()),
-    )
-
+# have to define this before its use in Work object
 work_2_user_table = sa.Table('work_2_user', meta.metadata,
     sa.Column('work_id', sa.types.UnicodeText, sa.ForeignKey('work.id'),
         primary_key=True),
     sa.Column('user_id', sa.types.UnicodeText, sa.ForeignKey('user.id'),
-        primary_key=True),
+        primary_key=True)
     )
 
 
-class Repository(object):
+class Work(Base):
+    __tablename__ = 'work'
 
-    def create_db(self):
-        '''Create the tables if they don't already exist'''
-        meta.metadata.create_all(bind=meta.engine)
+    id = sa.Column(sa.types.UnicodeText, primary_key=True, default=make_uuid)
+    created = sa.Column(sa.types.DateTime, default=datetime.now())
+    title = sa.Column(sa.types.UnicodeText)
+    uri = sa.Column(sa.types.UnicodeText)
 
-    def clean_db(self):
-        meta.metadata.drop_all(bind=meta.engine)
-
-    def init_db(self):
-        pass
-
-    def rebuild_db(self):
-        self.clean_db()
-        self.create_db()
+    owners = orm.relation('User', secondary=work_2_user_table, backref='works')
 
 
-repo = Repository()
+class Text(Base):
+    __tablename__ = 'text'
 
-class Work(object):
-    pass
+    id = sa.Column(sa.types.UnicodeText, primary_key=True, default=make_uuid)
+    work_id = sa.Column(sa.types.UnicodeText, sa.ForeignKey('work.id'))
+    created = sa.Column(sa.types.DateTime, default=datetime.now())
+    # types: url, (python) package, disk, inline (i.e. stored in payload)
+    payload_type = sa.Column(sa.types.UnicodeText, default=u'db')
+    payload = sa.Column(sa.types.UnicodeText)
+    format = sa.Column(sa.types.UnicodeText)
 
-class Text(object):
+    work = orm.relation(Work, backref='texts')
+
     def get_stream(self):
         '''Get fileobj for content (if any) associated with this text.
 
@@ -106,26 +93,29 @@ class Text(object):
             raise NotImplementedError
 
 
-class User(object):
-    pass
+class User(Base):
+    __tablename__ = 'user'
+
+    id = sa.Column(sa.types.UnicodeText, primary_key=True, default=make_uuid)
+    name = sa.Column(sa.types.UnicodeText)
+    created = sa.Column(sa.types.DateTime, default=datetime.now())
 
 
-mapper = meta.Session.mapper
+class Repository(object):
 
-mapper(Work, work_table, properties={
-    'owners':orm.relation(User, secondary=work_2_user_table, backref='works')
-    },
-    order_by=work_table.c.id
-    )
+    def create_db(self):
+        '''Create the tables if they don't already exist'''
+        meta.metadata.create_all(bind=meta.engine)
 
-mapper(Text, text_table, properties={
-    'work':orm.relation(Work, backref='texts')
-    },
-    order_by=text_table.c.id
-    )
+    def clean_db(self):
+        meta.metadata.drop_all(bind=meta.engine)
 
-mapper(User, user_table, properties={
-    },
-    order_by=user_table.c.id
-    )
+    def init_db(self):
+        pass
+
+    def rebuild_db(self):
+        self.clean_db()
+        self.create_db()
+
+repo = Repository()
 
