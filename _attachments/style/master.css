@@ -1,0 +1,12 @@
+@import url('http://openbiblio.net/wp-content/themes/twentyten/style.css');
+
+/* fixes */
+
+.entry-content, .entry-summary {
+  padding-top: 0;
+}
+
+#content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+  line-height: 24px;
+}
+
