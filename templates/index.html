@@ -1,0 +1,32 @@
+    {{>header}}
+
+    <h1>Recently...</h1>
+    <ul id="posts">
+      {{#posts}}
+        <li>
+          <h3><a href="{{ link }}">{{ title }}</a></h3>
+          {{#has_tags}}
+            <div class="tags">
+              {{#tags}}
+                <a href="{{link}}">{{tag}}</a>
+              {{/tags}}
+            </div>
+          {{/has_tags}}
+          <div class="by">
+            <span class="date">{{ date }}</span> 
+            by {{author}}
+          </div>
+        </li>
+      {{/posts}}
+    </ul>
+    <div class="paginate">
+      <a href="{{ older }}">Older entries</a>
+      <a href="{{5}}">5</a>
+      <a href="{{10}}">10</a>
+      <a href="{{25}}">25</a>      
+    </div>
+
+  {{>footer}}
+
+  {{>scripts}}
+</html>

@@ -1,21 +1,31 @@
     {{>header}}
 
-    <h1>{{pageTitle}}</h1>
+    <h1 class="entry-title">{{pageTitle}}</h1>
     <!-- form to create a post -->
-    <form id="new-post" action="new.html" method="post">
-        <p><label>Title</label>
-          <input type="text" name="title" value="{{title}}"></p>
-      <p><label for="body">Body</label>
-      <textarea name="body">{{body}}</textarea></p>
-      <p>
+    <form id="new-post" action="new.html" method="post" class="doc-edit">
+      <dl>
+        <dt>
+          <label>Title</label>
+        </dt>
+        <dd>
+          <input type="text" name="title" value="{{title}}" class="doc-title" />
+        </dd>
+        <dt>
+          <label for="body">Body</label>
+        </dt>
+        <dd>
+          <textarea name="body" class="doc-body">{{body}}</textarea></p>
+        </dd>
+        <dt>
         <label for="tags">Click tags to add them. (split by ',')</label>
+        </dt>
+        <dd>
         <input type="text" name="tags" value="{{tags}}">
-      </p>
-      <p>
-        <input id="preview" type="button" value="Preview"/>
-        <input type="submit" value="Save &rarr;"/> 
-        <span id="saved" style="display:none;">Saved</span>
-      </p>
+        </dd>
+      </dl>
+      <input id="preview" type="button" value="Preview"/>
+      <input type="submit" value="Save &rarr;"/> 
+      <span id="saved" style="display:none;">Saved</span>
     </form>
     <a target="_new" href="http://warpedvisions.org/projects/markdown-cheat-sheet/">Markdown help</a>
     <div id="show-preview"></div>
@@ -46,13 +56,12 @@
         if (!postDoc.created_at) {
           postDoc.created_at = new Date();
         }
-        if (!postDoc._id) {
-          postDoc._id = postDoc.title;
-        }
         app.db.saveDoc(postDoc, {
           success : function(resp) {
             $("#saved").text("Saved _rev: "+resp.rev).fadeIn(500).fadeOut(6000);
-            $('h1').html('Editing <a href="'+path.show('doc',resp.id)+'">'+resp.id+'</a> by '+postDoc.author);
+            console.log(resp);
+            alert(resp);
+            $('h1.entry-title').html('Updated successfully. <a href="'+path.show('view',resp.id)+'">View document</a>.');
           }
         });
         return false;

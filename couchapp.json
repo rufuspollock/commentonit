@@ -1,5 +1,5 @@
 {
-    "name": "CommentOnIt",
+    "name": "Comment On It",
     "description": "Inline Commenting on Stuff",
-    "index" : "_show/edit"
+    "index" : "_list/index/recent-items"
 }

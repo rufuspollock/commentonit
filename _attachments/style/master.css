@@ -10,3 +10,14 @@
   line-height: 24px;
 }
 
+#content .entry-title {
+  margin-bottom: 20px;
+}
+
+form.doc-edit input, form.doc-edit textarea {
+  width: 80%;
+}
+
+textarea.doc-body {
+  height: 400px;
+}
