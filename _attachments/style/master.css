@@ -14,6 +14,26 @@
   margin-bottom: 20px;
 }
 
+#header h1 {
+  margin-bottom: 0;
+  text-transform: uppercase;
+}
+
+#site-description {
+  clear:left;
+  float:left;
+  font-size:15px;
+  font-style:italic;
+  letter-spacing:normal;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 15px;
+  text-transform:none;
+  width:auto;
+}
+
+/* edit form */
+
 form.doc-edit input, form.doc-edit textarea {
   width: 80%;
 }

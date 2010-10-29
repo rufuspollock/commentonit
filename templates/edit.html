@@ -59,8 +59,6 @@
         app.db.saveDoc(postDoc, {
           success : function(resp) {
             $("#saved").text("Saved _rev: "+resp.rev).fadeIn(500).fadeOut(6000);
-            console.log(resp);
-            alert(resp);
             $('h1.entry-title').html('Updated successfully. <a href="'+path.show('view',resp.id)+'">View document</a>.');
           }
         });

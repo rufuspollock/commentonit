@@ -5,8 +5,9 @@ function(head, req) {
 	var path = require("vendor/couchapp/lib/path").init(req);
 	var Atom = require("vendor/couchapp/lib/atom");
 
-	var indexPath = path.list('index','recent-posts',{descending:true, limit:10});
-	var feedPath = path.list('index','recent-posts',{descending:true, limit:10, format:"atom"});
+	var indexPath = path.list('index','recent-items',{descending:true, limit:10});
+	var feedPath = path.list('index','recent-items',{descending:true, limit:10, format:"atom"});
+	var createPath = path.show('edit');
 
 	var path_parts = req.path;
 	// The provides function serves the format the client requests.
@@ -25,6 +26,7 @@ function(head, req) {
 			db : req.path[0],
 			design : req.path[2],
 			feedPath : feedPath,
+			createPath: createPath,
 			newPostPath : path.show("edit"),
 			assets : path.asset(),
 			posts : List.withRows(function(row) {

@@ -3,3 +3,4 @@ syntax: glob
 commentonit.egg-info/*
 development.ini*
 pip-requirements-local.txt
+sandbox/*
