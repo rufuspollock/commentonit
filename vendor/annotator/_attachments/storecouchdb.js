@@ -1,14 +1,5 @@
 ;(function($){
 
-function apiRequest (opts) {
-	opts = $.extend({
-	contentType: 'application/json',
-		success: function () {}
-	}, opts)
-
-	return $.ajax(opts)
-}
-
 Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 	events: {
 		'annotationCreated': 'annotationCreated',
@@ -21,22 +12,10 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 
 		annotationData: {},
 
-		// If loadFromSearch is set, then we load the first batch of
-		// annotations from 'prefix/search(options=loadFromSearch)'
-		// instead of the registry path 'prefix/read'.
-		//
-		//		 loadFromSearch: {
-		//			 'limit': 0,
-		//			 'all_fields': 1
-		//			 'uri': 'http://this/document/only'
-		//		 }
-
-		urls: {
-			'create':	'/annotations',		 // POST
-			'read':		'/annotations/:id', // GET
-			'update':	'/annotations/:id', // PUT (since idempotent)
-			'destroy': '/annotations/:id', // DELETE
-			'search':	'/search'
+		loadFromSearch: {
+			'limit': 0,
+			'all_fields': 1,
+			'uri': 'http://this/document/only'
 		}
 	},
 
@@ -47,9 +26,10 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 
 		this.element = element
 		this.annotations = []
+		var dbname = 'annotations'
+		this.db = $.couch.db(dbname)
 
-		// disable initial load for the time being ...
-		// this.loadAnnotationsFromSearch(this.options.loadFromSearch)
+		this.loadAnnotationsFromSearch(this.options.loadFromSearch)
 
 		this._super()
 	},
@@ -62,17 +42,11 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 		if (this.annotations.indexOf(annotation) === -1) {
 			this.registerAnnotation(annotation)
 
-			apiRequest({
-				url: this._urlFor('create'),
-				data: this._dataFor(annotation).json,
-				type: 'POST',
-				success: function (data) {
-					// Update with (e.g.) ID from server.
-					if (!("id" in data)) { console.warn("Warning: No ID returned from server for annotation ", annotation) }
-					self.updateAnnotation(annotation, data)
+			this.db.saveDoc(this._dataFor(annotation), {
+				success: function(resp) {
+					self.updateAnnotation(annotation, resp)
 				}
 			})
-
 		} else {
 			// This is called to update annotations created at load time with
 			// the highlight elements created by Annotator.
@@ -84,11 +58,11 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 		var self = this
 
 		if ($.inArray(annotation, this.annotations) !== -1) {
-			apiRequest({
-				url: this._urlFor('destroy', annotation.id),
-				type: 'DELETE',
-				success: function () { self.unregisterAnnotation(annotation) }
-			})
+			self.db.removeDoc(annotation, {
+				success: function () {
+					self.unregisterAnnotation(annotation) }
+				}
+			)
 		}
 	},
 
@@ -96,11 +70,10 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 		var self = this
 
 		if ($.inArray(annotation, this.annotations) !== -1) {
-			apiRequest({
-				url: this._urlFor('update', annotation.id),
-				type: 'PUT',
-				data: this._dataFor(annotation),
-				success: function () { self.updateAnnotation(annotation) }
+			this.db.saveDoc(this._dataFor(annotation), {
+				success: function () {
+					self.updateAnnotation(annotation)
+				}
 			})
 		}
 	},
@@ -108,8 +81,6 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 	// NB: registerAnnotation and unregisterAnnotation do no error-checking/
 	// duplication avoidance of their own. Use with care.
 	registerAnnotation: function (annotation) {
-	console.log(this)
-	console.log(this.annotations)
 		this.annotations.push(annotation)
 	},
 
@@ -129,36 +100,18 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 		$(annotation.highlights).data('annotation', annotation)
 	},
 
-	loadAnnotations: function () {
-		var self = this
-
-		apiRequest({
-			url: this._urlFor('read'),
-			type: 'GET',
-			success: function (data) {
-				self.annotations = data
-				self.options.annotator.loadAnnotations(self.annotations)
-			}
-		})
-	},
-
 	loadAnnotationsFromSearch: function (searchOptions) {
 		var self = this
-		apiRequest({
-			url: this._urlFor('search'),
-			type: 'GET',
-			data: searchOptions,
-			success: function (data) {
-				self.annotations = data.results
+		this.db.view('annotator/byuri?include_docs=true', {
+			success: function (resp) {
+				self.annotations = $.map(resp.rows, function(row, idx) {
+					var out = row.doc;
+					out.id = out._id;
+					return out
+				})
 				self.options.annotator.loadAnnotations(self.annotations)
 			}
 		})
-	},
-
-	_urlFor: function (action, id) {
-		var url = this.options.prefix || '';
-		url += this.options.urls[action].replace(/\/:id/, id ? '/' + id : '')
-		return url
 	},
 
 	_dataFor: function (annotation) {
@@ -170,7 +123,9 @@ Annotator.Plugins.StoreCouchdb = DelegatorClass.extend({
 
 		// Preload with extra data.
 		$.extend(annotation, this.options.annotationData)
-		var data = { json: $.toJSON(annotation) }
+		annotation.type = 'annotation'
+		// deep copy
+		var data = JSON.parse(JSON.stringify(annotation))
 
 		// Restore the highlights array.
 		annotation.highlights = highlights

@@ -2,7 +2,7 @@
 
     <h1>{{title}} [<a href="{{editLink}}">Edit</a>]</h1>
 
-    <div class="document-body">
+    <div class="document-body annotated-text">
       {{{body}}}
     </div>
 
@@ -13,4 +13,23 @@
   {{>footer}}
 
   {{>scripts}}
+  {{>annotation-scripts}}
+  <script>
+    jQuery(function ($) {
+        var annotator_store = '';
+        $('.annotated-text').annotator()
+           .annotator('addPlugin', Annotator.Plugins.User, {one: 1, two: 2})
+           .annotator('addPlugin', Annotator.Plugins.StoreCouchdb, {
+              prefix: annotator_store,
+              // loadFromSearch: {
+              //  'uri': '{{{uri}}}'
+              //},
+              annotationData: {
+                'uri': 'myuri'
+                // 'uri': '{{{uri}}}',
+                // 'user': {'id': '{{{userid}}}'} 
+              }
+           });
+    });
+  </script>
 </html>
