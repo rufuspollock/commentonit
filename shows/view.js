@@ -4,10 +4,12 @@ function(doc, req) {
 	var path = require("vendor/couchapp/lib/path").init(req);
 	var markdown = require("vendor/couchapp/lib/markdown");
 
+	var indexPath = path.asset('index.html');
 	var editPath = path.show('edit', doc._id);
 
 	var data = {
 		header : {
+			indexPage: indexPath,
 			blogName : ddoc.couchapp.name,
 		},
 		scripts : {},

@@ -3,11 +3,11 @@ function(doc, req) {
   var Mustache = require("vendor/couchapp/lib/mustache");
   var path = require("vendor/couchapp/lib/path").init(req);
 
-  var indexPath = path.show('edit');
+  var indexPath = path.asset('index.html');
 
   var data = {
     header : {
-      index : indexPath,
+      indexPage : indexPath,
       blogName : ddoc.couchapp.name,
     },
     scripts : {},
