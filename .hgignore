@@ -1,4 +1,5 @@
 syntax: glob
+.couchapprc
 *.pyc
 commentonit.egg-info/*
 development.ini*
