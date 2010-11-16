@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <title>{{blogName}}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="http://assets.okfn.org/gfx/logo/favicon.ico" type="image/x-icon" />
+  <!--
+  <link rel="stylesheet" href="https://github.com/nickstenning/annotator/raw/0.8/pkg/annotator.min.css" type="text/css" />
+  -->
+  <link rel="stylesheet" href="themes/commentonit/style.css" type="text/css">
+</head>
+
+<body>
+<div id="wrapper">
+  <div id="header">
+  <div id="masthead">
+    <div id="branding" role="banner">
+      <h1 id="site-title">
+        <a href="{{ indexPage }}" title="{{blogName}} Home">
+          Comment On It
+        </a>
+      </h1>
+      <div id="site-description">Inline, in-browser annotation of documents online</div>
+    </div> <!-- /branding -->
+
+    <div id="login-and-search">
+      <div class="search-form">
+        <form action="" method="get">
+          <input type="search" class="search" name="q" value="" autocomplete="off" results="5" placeholder="Search..."/>
+        </form>
+      </div>
+      <div class="user-nav">
+        <div class="logged-in" style="display:none;">
+          <span></span>
+          <a href="#/logout">Logout</a>
+        </div>
+        <div class="guest">
+          <a href="#/login">Login or Signup</a>
+        </div>
+       </div>
+    </div>
+     
+  <div id="access" role="navigation">
+    <div class="menu">
+    <ul>
+      <li><a href="{{ indexPage }}">Home</a></li>
+    </ul>
+    </div> <!-- .menu -->
+  </div> <!-- #access -->
+  </div><!-- #masthead -->
+  </div><!-- #header -->  
+
+  <div id="main"> 
+    <div id="container"> 
+      <div id="content" role="main"> 
+
+        <div class="page type-page hentry">
+          <div class="entry-content">
+
+    <h1>Welcome to Comment on It</h1>
+    <p>This site allows you comment on and annotate texts <strong>inline</strong>. To get started just create a document by pasting in some text and then share it with your colleagues.</p>
+
+          </div><!-- .entry-content -->
+        </div>
+
+      </div> <!-- #content -->
+    </div> <!-- #container -->
+
+    <div id="primary" class="widget-area" role="complementary">
+      <ul class="xoxo">
+        <li class="widget-container widget_text">
+          <h3 class="widget-title">About Us</h3>
+          <div class="textwidget">
+            About text goes here.
+          </div>
+        </li>
+      </ul>
+    </div><!-- #primary .widget-area -->
+
+  </div><!-- #main -->
+  
+    <!-- footer -->
+  <div id="footer" role="contentinfo"> 
+    <div id="colophon">
+      <div id="footer-widget-area" role="complementary">
+
+        <div id="first" class="widget-area">
+          <ul class="xoxo">
+          <li id="text-12" class="widget-container widget_text">
+            <h3 class="widget-title">About</h3>
+            <div class="textwidget">
+              <ul>
+                <li><a href="/license/">License</a></li>
+              </ul>
+            </div>
+          </li>
+          </ul>
+        </div><!-- #first .widget-area -->
+
+      <div id="site-info">
+      </div><!-- #site-info -->
+
+      <div id="site-generator">
+      </div><!-- #site-generator -->
+    </div><!-- #colophon -->
+  </div><!-- #footer --> 
+ 
+</div><!-- #wrapper -->
+
+<script src="/_utils/script/json2.js"></script>
+<script src="script/vendor/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/_utils/script/jquery.couch.js?0.8.0"></script>
+<script src="script/vendor/sammy/sammy.js" type="text/javascript" charset="utf-8"></script>
+<script src="script/app.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
