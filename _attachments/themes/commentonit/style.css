@@ -32,6 +32,10 @@
   width:auto;
 }
 
+#login-and-search {
+  text-align: right;
+}
+
 /* edit form */
 
 form.doc-edit input, form.doc-edit textarea {
