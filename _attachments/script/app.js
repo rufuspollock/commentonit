@@ -1,5 +1,4 @@
 ;(function($) {
-
 	var dbname = window.location.pathname.split('/')[1] || 'commentonit',
 		db     = $.couch.db(dbname);
 
@@ -65,20 +64,33 @@
 	};
 
 
-	var app = $.sammy(function() {
-		this.element_selector = '.entry-content';
-
+	var app = $.sammy('.entry-content', function() {
+		this.use('Mustache', 'ms');
+		
 		this.get('#/', function(context) {
+			var context = this;
 			db.view('commentonit/recent-items', {
 				include_docs: true,
 				success: function(resp) {
-					$.each(resp.rows, function(idx, row) {
-						context.log(row);
+					texts = $.map(resp.rows, function(row, idx) {
+						return row.doc;
+					});
+					context.partial('templates/home.ms', {
+						count: resp.rows.length,
+						texts: texts
 					});
 				}
 			});
 		});
 
+		this.get('#/text/:id', function(context) {
+			docid = this.params['id'];
+			db.openDoc(docid, {
+				success: function(doc) {
+					context.partial('templates/text/view.ms', doc);
+				}
+			});
+		});
 	});
 
 	$(function() {
