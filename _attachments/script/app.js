@@ -66,9 +66,13 @@
 
 	var app = $.sammy('.entry-content', function() {
 		this.use('Mustache', 'ms');
-		
+		this.use('Title');
+		this.setTitle(function(title) {
+			return [title, ' - Comment On It'].join('');
+		});
+
 		this.get('#/', function(context) {
-			var context = this;
+			this.title('Home');
 			db.view('commentonit/recent-items', {
 				include_docs: true,
 				success: function(resp) {
@@ -84,9 +88,12 @@
 		});
 
 		this.get('#/text/:id', function(context) {
+			var self = this;
+			this.title(' - View');
 			docid = this.params['id'];
 			db.openDoc(docid, {
 				success: function(doc) {
+					self.title(doc.title + ' - View');
 					context.partial('templates/text/view.ms', doc);
 				}
 			});
