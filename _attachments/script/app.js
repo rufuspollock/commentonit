@@ -2,7 +2,7 @@
 	var dbname = window.location.pathname.split('/')[1] || 'commentonit',
 		db     = $.couch.db(dbname);
 
-	// var showdown = new Showdown.converter();
+	var showdown = new Showdown.converter();
 
 	User = {
 		_current_user: false,
@@ -87,14 +87,92 @@
 			});
 		});
 
+		this.helpers({
+			setupEditForm: function(textDoc) {
+				var self = this;
+				$('form#new-text').live('submit', function(e) {
+					e.preventDefault();
+					// TODO: get account stuff working again
+					// textDoc.author = $$('#account').userCtx.name;
+					textDoc.body = $('textarea[name=body]').val();
+					textDoc.title = $('input[name=title]').val();
+					var dtags = [], tags = $('input[name=tags]').val().split(',');
+					for(var i in tags) {
+						dtags.push($.trim(tags[i]));
+					}
+					textDoc.tags = dtags;
+					if (!textDoc.created_at) {
+						textDoc.created_at = new Date();
+					}
+					db.saveDoc(textDoc, {
+						success : function(resp) {
+							self.redirect('#', 'text', resp.id);
+						}
+					});
+					return false;
+				});
+
+				if (textDoc._id) {
+					$('#preview').before('<input type="button" id="delete" value="Delete Post"/> ');
+					$('#delete').live('click', function() {
+						db.deleteDoc(textDoc, {
+							success : function(resp) {
+								$('h1').text('Deleted '+resp.id);
+								$('form#new-text input').attr('disabled', true);
+							}
+						});
+						return false;
+					});
+				}
+
+				$('#preview').live('click', function() {
+					var html = showdown.makeHtml($('textarea[name=body]').val());
+					$('#show-preview').html(html);
+				});
+			}
+		});
+
+		this.get('#/text/edit', function(context) {
+			this.title('Create - Text');
+			context.partial('templates/text/edit.ms', {
+				pageHeading: 'Create Text (to annotate)'
+				});
+			this.setupEditForm({
+				type: 'text',
+				format: 'markdown'
+				});
+		});
+
+		this.get('#/text/edit/:id', function(context) {
+			var self = this;
+			this.title(' - Edit');
+			docid = this.params['id'];
+			context.log('edit - ' + docid);
+
+			db.openDoc(docid, {
+				success: function(doc) {
+					self.title(doc.title + ' - Edit');
+					// hack deep copy
+					var templateVars = JSON.parse(JSON.stringify(doc));
+					templateVars.pageHeading = 'Editing ' + doc.title;
+					context.partial('templates/text/edit.ms', templateVars);
+					self.setupEditForm(doc);
+				}
+			});
+		});
+
 		this.get('#/text/:id', function(context) {
 			var self = this;
 			this.title(' - View');
 			docid = this.params['id'];
 			db.openDoc(docid, {
 				success: function(doc) {
+					// copy doc as basis for template vars
+					var templateVars = jQuery.extend(true, {}, doc);
+					templateVars.editLink = '#/text/edit/' + docid;
 					self.title(doc.title + ' - View');
-					context.partial('templates/text/view.ms', doc);
+					context.partial('templates/text/view.ms',
+						templateVars);
 				}
 			});
 		});
