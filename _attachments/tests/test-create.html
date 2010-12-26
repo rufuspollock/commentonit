@@ -29,11 +29,11 @@
 <tr>
 	<td>type</td>
 	<td>itsalltext_generated_id_body_1</td>
-	<td>The history of the Victorian Age will never be written; we know too much about it. For ignorance is the first requisite of the historian -- ignorance, which simplifies and clarifies, which selects and omits, with a placid perfection unattainable by the highest art.<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />Concerning the Age which has just passed, our fathers and our grandfathers have poured forth and accumulated so vast a quantity of information that the industry of a Ranke would be submerged by it, and the perspicacity of a Gibbon would quail before it. <br /><br />It is not by the direct method of a scrupulous narration that the explorer of the past can hope to depict that singular epoch. If he is wise, he will adopt a subtler strategy.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br /><br />He will attack his subject in unexpected places; he will fall upon the flank, or the rear; he will shoot a sudden, revealing searchlight into obscure recesses, hitherto undivined. He will row out over that great ocean of material, and lower down into it, here and there, a little bucket, which will bring up to the light of day some characteristic specimen, from those far depths, to be examined with a careful curiosity.</td>
+	<td>The history of the Victorian Age will never be written; we know too much about it. For ignorance is the first requisite of the historian -- ignorance, which simplifies and clarifies, which selects and omits, with a placid perfection unattainable by the highest art.<br /><br />Concerning the Age which has just passed, our fathers and our grandfathers have poured forth and accumulated so vast a quantity of information that the industry of a Ranke would be submerged by it, and the perspicacity of a Gibbon would quail before it.<br /><br />It is not by the direct method of a scrupulous narration that the explorer of the past can hope to depict that singular epoch. If he is wise, he will adopt a subtler strategy.<br /><br />He will attack his subject in unexpected places; he will fall upon the flank, or the rear; he will shoot a sudden, revealing searchlight into obscure recesses, hitherto undivined. He will row out over that great ocean of material, and lower down into it, here and there, a little bucket, which will bring up to the light of day some characteristic specimen, from those far depths, to be examined with a careful curiosity.</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//form[@id='new-text']/dl/dt[3]</td>
+	<td>tags</td>
 	<td></td>
 </tr>
 <tr>
@@ -42,8 +42,28 @@
 	<td>tag1, tag2, tag3</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>//input[@value='Save →']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Edit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>title</td>
+	<td>Eminent Victorians v2</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Save →']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertAlert</td>
+	<td>The document could not be saved: Document update conflict.</td>
 	<td></td>
 </tr>
 
