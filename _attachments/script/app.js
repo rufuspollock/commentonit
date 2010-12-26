@@ -1,4 +1,4 @@
-;(function($) {
+var CommentOnIt = (function($, commentOnIt) {
 	var dbname = window.location.pathname.split('/')[1] || 'commentonit',
 		db     = $.couch.db(dbname);
 
@@ -63,8 +63,7 @@
 		}
 	};
 
-
-	var app = $.sammy('.entry-content', function() {
+	commentOnIt.app = $.sammy('.entry-content', function() {
 		this.use('Mustache', 'ms');
 		this.use('Title');
 		this.setTitle(function(title) {
@@ -134,6 +133,7 @@
 
 		this.get('#/text/edit', function(context) {
 			this.title('Create - Text');
+			context.log('Create - Text');
 			context.partial('templates/text/edit.ms', {
 				pageHeading: 'Create Text (to annotate)'
 				});
@@ -178,7 +178,5 @@
 		});
 	});
 
-	$(function() {
-		app.run('#/');
-	});
-})(jQuery);
+	return commentOnIt;
+})(jQuery, CommentOnIt || {});
