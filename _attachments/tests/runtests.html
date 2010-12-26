@@ -4,15 +4,37 @@
 <head>
   <link rel="stylesheet" href="vendor/qunit.css" type="text/css" media="screen" />
   <script type="text/javascript" src="vendor/qunit.js"></script>
+  <script type="text/javascript" src="vendor/qunit-spec.js"></script>
 
-  <script src="http://localhost:5984/_utils/script/jquery.js"></script>
-  <script src="http://localhost:5984/_utils/script/jquery.couch.js"></script>
-  <script type="text/javascript" src="test_storecouch.js"></script>
+  <script src="../script/vendor/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/_utils/script/jquery.couch.js?0.8.0"></script>
+  <script src="../script/vendor/sammy/sammy.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../script/vendor/sammy/plugins/sammy.mustache.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../script/vendor/sammy/plugins/sammy.title.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../script/vendor/showdown.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../script/app.js" type="text/javascript" charset="utf-8"></script>
+
+  <!--script type="text/javascript" src="test_storecouch.js"></script-->
+    <script type="text/javascript" src="test_sammy_application.js"></script>
 </head>
 <body>
   <h1 id="qunit-header">CommentOnIt Tests</h1>
   <h2 id="qunit-banner"></h2>
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
+
+  <div id="main"> 
+    <div id="container"> 
+      <div id="content" role="main"> 
+
+        <div class="page type-page hentry">
+          <div class="entry-content">
+            <!-- content goes here -->
+          </div><!-- .entry-content -->
+        </div>
+
+      </div> <!-- #content -->
+    </div> <!-- #container -->
+  </div>
 </body>
 </html>
